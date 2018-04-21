@@ -23,112 +23,155 @@ import collections
 
 
 def predict(features):
-    if (features["775.1953125"] <= 360351.84375):
-        if (features["43.06640625"] <= 206807.5):
-            if (features["473.73046875"] <= 645945.0625):
-                if (features["258.3984375"] <= 893203.375):
-                    if (features["473.73046875"] <= 65068.0625):
-                        if (features["645.99609375"] <= 52795.01171875):
-                            return False
+    if (features[19] <= 1080946688.0):
+        if (features[7] <= 386723776.0):
+            if (features[9] <= 1281349888.0):
+                if (features[1] <= 1085200384.0):
+                    if (features[17] <= 1214752000.0):
+                        if (features[5] <= 191212352.0):
+                            return [[0,1]]
                         else:
-                            return True
-                    else:
-                        if (features["645.99609375"] <= 24125.04296875):
-                            if (features["904.39453125"] <= 55882.1796875):
-                                return False
+                            if (features[15] <= 1007127040.0):
+                                return [[31, 0]]
                             else:
-                                return True
+                                return [[4,2]]
+                    else:
+                        return [[0,1]]
+                else:
+                    if (features[6] <= 897229952.0):
+                        return [[0,4]]
+                    else:
+                        if (features[9] <= 896530496.0):
+                            return [[3,0]]
                         else:
-                            return False
-                else:
-                    return True
+                            return [[0,1]]
             else:
-                return True
+                return [[0,3]]
         else:
-            if (features["172.265625"] <= 569225.75):
-                if (features["344.53125"] <= 784465.25):
-                    return True
+            if (features[11] <= 1336672256.0):
+                if (features[2] <= 343647808.0):
+                    if (features[19] <= 806112192.0):
+                        return [[0,17]]
+                    else:
+                        if (features[8] <= 894574976.0):
+                            if (features[3] <= 771246656.0):
+                                return [[1,0]]
+                            else:
+                                return [[1,8]]
+                        else:
+                            return [[5,0]]
                 else:
-                    return False
+                    if (features[12] <= 236159072.0):
+                        return [[8,0]]
+                    else:
+                        if (features[15] <= 293831104.0):
+                            if (features[5] <= 1295487104.0):
+                                return [[1,13]]
+                            else:
+                                return [[1,0]]
+                        else:
+                            if (features[11] <= 918677888.0):
+                                return [[73,91]]
+                            else:
+                                return [[74,47]]
             else:
-                return False
+                if (features[15] <= 462198528.0):
+                    return [[0,1]]
+                else:
+                    return [[12, 0]]
     else:
-        if (features["301.46484375"] <= 112624.625):
-            return False
-        else:
-            if (features["732.12890625"] <= 1525415.5):
-                return True
+        if (features[0] <= 475709184.0):
+            if (features[2] <= 1093208832.0):
+                if (features[9] <= 300194176.0):
+                    if (features[10] <= 1111915264.0):
+                        return [[2,0]]
+                    else:
+                        return [[0,1]]
+                else:
+                    if (features[6] <= 198416896.0):
+                        return [[1,0]]
+                    else:
+                        if (features[15] <= 1279640320.0):
+                            return [[0,33]]
+                        else:
+                            if (features[16] <= 690079104.0):
+                                return [[1,0]]
+                            else:
+                                return [[0,1]]
             else:
-                return False
+                if (features[20] <= 888885504.0):
+                    return [[0,2]]
+                else:
+                    return [[4,0]]
+        else:
+            if (features[12] <= 591325568.0):
+                if (features[16] <= 266438112.0):
+                    return [[2,0]]
+                else:
+                    if (features[22] <= 279484224.0):
+                        return [[2,0]]
+                    else:
+                        return [[0,18]]
+            else:
+                if (features[15] <= 1116518272.0):
+                    if (features[1] <= 1052548736.0):
+                        if (features[15] <= 320609600.0):
+                            return [[0,2]]
+                        else:
+                            if (features[10] <= 410241408.0):
+                                return [[1,2]]
+                            else:
+                                return [[20, 1]]
+                    else:
+                        if (features[7] <= 1003890944.0):
+                            return [[0,6]]
+                        else:
+                            return [[3,0]]
+                else:
+                    return [[0,5]]
 
 X = []
 Y = []
-data_feature_names = [(str)(x * 44100 / 1024) for x in range(1, 25)]
-# getting  the clip names
-clip_names = []
-directory = "test_samples"
-for filename in os.listdir(directory):
-    if filename.endswith(".wav"):
-        clip_names.append("test_samples\\" + filename)
+# Getting Truck MAG values from text file
+filepath = ['TRUCK_MAG_PHOTON_TEST.txt']
 
-clip_number = 0
-for clip in clip_names:
-    # count in frequency range
-    freq_count = [0 for x in range(24)]
-    #freq_cnt_bool = [True for x in range (6)]
-    #check = [0 for c in range(605)]
-    fs_rate, signal = wavfile.read(clip)
-    signal = signal[:1024]
-    l_audio = len(signal.shape)
-    if l_audio == 2:
-        signal = signal.sum(axis=1) / 2
-    N = signal.shape[0]
-    secs = N / float(fs_rate)
-    Ts = 1.0 / fs_rate  # sampling interval in time
-    # time vector as scipy arange field / numpy.ndarray
-    t = scipy.arange(0, secs, Ts)
-    FFT = scipy.fft(signal)
+for f in filepath:
+    with open(f) as fp:
+        line = fp.readline()
+        while line:
+            mag_values = line.strip().split(",")
+            if len(mag_values) != 1:
+                X.append(list(map(int, mag_values[:len(mag_values)-1][:23])))
+                Y.append(True)
+            line = fp.readline()
 
-    abs_FFT = abs(FFT)[:24]
-    for index, value in enumerate(abs_FFT):
-        freq_count[index] = value
-        '''
-        if value >= 0.01*max(abs_FFT[100:]) and index>=100 and index<=700 :
-            if index>=100 and index <=200 :
-                freq_count[0] += 1
-            elif index>=201 and index <=300 :
-                freq_count[1] += 1
-            elif index>=301 and index <=400 :
-                freq_count[2] += 1
-            elif index>=401 and index <=500 :
-                freq_count[3] += 1
-            elif index>=501 and index <=600 :
-                freq_count[4] += 1
-            elif index>=601 and index <=700 :
-                freq_count[5] += 1
-        '''
-    '''    
-    for index, value in enumerate(freq_count) :
-        if value >= 60 :
-            freq_cnt_bool[index] = True
-        else :
-            freq_cnt_bool[index] = False
-    '''
 
-    #print (clip+" "+(str)(freq_count))
-    X.append(freq_count)
-    if "non" in clip:
-        Y.append(False)
+# Getting Non-Truck MAG values from text file
+filepath = ['NON_TRUCK_MAG_PHOTON_TEST.txt']
+
+for f in filepath:
+    with open(f) as fp:
+        line = fp.readline()
+        while line:
+            mag_values = line.strip().split(",")
+            if len(mag_values) != 1:
+                X.append(list(map(int, mag_values[:len(mag_values)-1][:23])))
+                Y.append(False)
+            line = fp.readline()
+
+
+data_feature_names = [(str)(x) for x in range(23)]
+print(data_feature_names)
+
+for index, value in enumerate(X):
+    if Y[index] == True:
+        actual = "This is a Truck Sound"
     else:
-        Y.append(True)
-    #print (X_train[-1], Y_train)
-    clip_number += 1
-    features = {}
-    for index, value in enumerate(data_feature_names):
-        #print (index)
-        features[value] = freq_count[index]
-    if predict(features):
-        print(clip + " is a Truck sound")
-    else:
-        print(clip + " is a Non-Truck sound")
-    clip_number += 1
+        actual = "This is not a Truck Sound"
+    pred = predict(value)
+    prediction = False
+    if (pred[0][0] >= pred[0][1] ) :
+        prediction = False
+    else :
+        prediction = True 
+    print("Prediction :" + (str)(prediction) + " Actual :" + actual)

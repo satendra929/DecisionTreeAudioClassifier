@@ -20,11 +20,39 @@ from sklearn import tree
 from sklearn.datasets import load_iris
 import collections
 
-
 X = []
 Y = []
-data_feature_names = [(str)(x*44100/1024) for x in range (1,25)]
-#print (data_feature_names)
+#Getting Truck MAG values from text file
+filepath = ['TRUCK_MAG_PHOTON.txt','TRUCK_MAG_PHOTON_2.txt','TRUCK_MAG_PHOTON_3.txt']
+
+for f in filepath :
+    with open(f) as fp:  
+       line = fp.readline()
+       while line:
+           mag_values = line.strip().split(",")
+           if len(mag_values) != 1: 
+               X.append(list(map(int, mag_values[:len(mag_values)-1][:23])))
+               Y.append(True)
+           line = fp.readline()
+
+print(X[0])
+#Getting Non-Truck MAG values from text file
+filepath = ['NON_TRUCK_MAG_PHOTON.txt','NON_TRUCK_MAG_PHOTON_2.txt','NON_TRUCK_MAG_PHOTON_3.txt']
+
+for f in filepath :
+    with open(f) as fp:  
+       line = fp.readline()
+       while line:
+           mag_values = line.strip().split(",")
+           if len(mag_values) != 1: 
+               X.append(list(map(int, mag_values[:len(mag_values)-1][:23])))
+               Y.append(False)
+           line = fp.readline()
+
+print(len(X),len(Y))
+data_feature_names = [(str)(x) for x in range (23)]
+print (data_feature_names)
+'''
 #getting  the clip names
 clip_names = []
 directory = "."
@@ -52,29 +80,7 @@ for clip in clip_names :
     abs_FFT = abs(FFT)[:24]
     for index,value in enumerate(abs_FFT) :
         freq_count[index] = value
-        '''
-        if value >= 0.01*max(abs_FFT[100:]) and index>=100 and index<=700 :
-            if index>=100 and index <=200 :
-                freq_count[0] += 1
-            elif index>=201 and index <=300 :
-                freq_count[1] += 1
-            elif index>=301 and index <=400 :
-                freq_count[2] += 1
-            elif index>=401 and index <=500 :
-                freq_count[3] += 1
-            elif index>=501 and index <=600 :
-                freq_count[4] += 1
-            elif index>=601 and index <=700 :
-                freq_count[5] += 1
-        '''
-    '''    
-    for index, value in enumerate(freq_count) :
-        if value >= 60 :
-            freq_cnt_bool[index] = True
-        else :
-            freq_cnt_bool[index] = False
-    '''
-    
+        
     #print (clip+" "+(str)(freq_count))
     X.append(freq_count)
     if "non" in clip :
@@ -83,11 +89,11 @@ for clip in clip_names :
         Y.append(True)
     #print (X_train[-1], Y_train)
     clip_number+=1
-
+'''
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.20)  
 
-classifier = DecisionTreeClassifier()  
+classifier = DecisionTreeClassifier(max_depth=7)  
 classifier.fit(X_train, Y_train)
 Y_pred = classifier.predict(X_test) 
 print(confusion_matrix(Y_test, Y_pred))  
@@ -122,3 +128,29 @@ get_code(classifier, data_feature_names)
 
 with open("dtree.txt", "w") as f:
     f = tree.export_graphviz(classifier, out_file=f)
+
+
+#Not Useful
+
+'''
+    if value >= 0.01*max(abs_FFT[100:]) and index>=100 and index<=700 :
+        if index>=100 and index <=200 :
+            freq_count[0] += 1
+        elif index>=201 and index <=300 :
+            freq_count[1] += 1
+        elif index>=301 and index <=400 :
+            freq_count[2] += 1
+        elif index>=401 and index <=500 :
+            freq_count[3] += 1
+        elif index>=501 and index <=600 :
+            freq_count[4] += 1
+        elif index>=601 and index <=700 :
+            freq_count[5] += 1
+    '''
+'''    
+for index, value in enumerate(freq_count) :
+    if value >= 60 :
+        freq_cnt_bool[index] = True
+    else :
+        freq_cnt_bool[index] = False
+'''
